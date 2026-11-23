@@ -10,8 +10,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import io.github.tanmaychinis24.rps.gameplay.Shuffler;
-
 public class ShufflerTest {
 	
 	private final int copyOfItemsInEachBag = 3;
@@ -38,18 +36,18 @@ public class ShufflerTest {
 		
 		Shuffler shuffler = new Shuffler(new Random(123));
 		
-		List<String> drawnItems = new ArrayList<String>();
+		List<Move> drawnItems = new ArrayList<Move>();
 		
 		for (int i=0; i<refillAtSize; i++) {
 			drawnItems.add(shuffler.nextItem());
 		}
 		
 		//upper bound
-		assertThat(drawnItems).filteredOn("R"::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag);
-		assertThat(drawnItems).filteredOn("P"::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag);
-		assertThat(drawnItems).filteredOn("S"::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag);
+		assertThat(drawnItems).filteredOn(Move.ROCK::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag);
+		assertThat(drawnItems).filteredOn(Move.PAPER::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag);
+		assertThat(drawnItems).filteredOn(Move.SCISSORS::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag);
 		
-		Set<String> drawnSet = new HashSet<>(drawnItems);
+		Set<Move> drawnSet = new HashSet<>(drawnItems);
 		//lower bound
 		assertThat(drawnSet).hasSizeGreaterThanOrEqualTo(2); // 2 can be converted to a formula
 		
@@ -59,7 +57,7 @@ public class ShufflerTest {
 	public void testUpperBoundsOfShufflerBeyondRefillBoundary() {
 		
 		Shuffler shuffler = new Shuffler(new Random(123));
-		List<String> drawnItems = new ArrayList<String>();
+		List<Move> drawnItems = new ArrayList<Move>();
 		int numberOfRefillsToTest = 5;
 		
 		int itemsToDraw = (copyOfItemsInEachBag*3 - refillAtSize) * numberOfRefillsToTest;
@@ -69,9 +67,9 @@ public class ShufflerTest {
 		}
 		
 		//upper bound
-		assertThat(drawnItems).filteredOn("R"::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag*numberOfRefillsToTest);
-		assertThat(drawnItems).filteredOn("P"::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag*numberOfRefillsToTest);
-		assertThat(drawnItems).filteredOn("S"::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag*numberOfRefillsToTest);
+		assertThat(drawnItems).filteredOn(Move.ROCK::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag*numberOfRefillsToTest);
+		assertThat(drawnItems).filteredOn(Move.PAPER::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag*numberOfRefillsToTest);
+		assertThat(drawnItems).filteredOn(Move.SCISSORS::equals).hasSizeLessThanOrEqualTo(copyOfItemsInEachBag*numberOfRefillsToTest);
 		
 		
 	}
@@ -81,7 +79,7 @@ public class ShufflerTest {
 	public void testFairDistributionOfShufflerBeyondRefillBoundary() {
 		
 		Shuffler shuffler = new Shuffler(new Random(123));
-		List<String> drawnItems = new ArrayList<String>();
+		List<Move> drawnItems = new ArrayList<Move>();
 		int totalDraws = 500;
 		
 		for(int i=0; i<totalDraws; i++) {
@@ -90,10 +88,10 @@ public class ShufflerTest {
 		
 		int minExpectedPerItem = (int) (totalDraws * 0.30); // ideally we would want 33.33% but 30% is still giving us 90% accuracy
 		
-		assertThat(drawnItems).filteredOn("R"::equals).hasSizeGreaterThanOrEqualTo(minExpectedPerItem);
-		assertThat(drawnItems).filteredOn("P"::equals).hasSizeGreaterThanOrEqualTo(minExpectedPerItem);
-		assertThat(drawnItems).filteredOn("S"::equals).hasSizeGreaterThanOrEqualTo(minExpectedPerItem);
-		System.out.println(drawnItems.stream().filter("R"::equals).count()+ " vs "+minExpectedPerItem);
+		assertThat(drawnItems).filteredOn(Move.ROCK::equals).hasSizeGreaterThanOrEqualTo(minExpectedPerItem);
+		assertThat(drawnItems).filteredOn(Move.PAPER::equals).hasSizeGreaterThanOrEqualTo(minExpectedPerItem);
+		assertThat(drawnItems).filteredOn(Move.SCISSORS::equals).hasSizeGreaterThanOrEqualTo(minExpectedPerItem);
+		System.out.println(drawnItems.stream().filter(Move.ROCK::equals).count()+ " vs "+minExpectedPerItem);
 		
 	}
 

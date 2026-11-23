@@ -18,9 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import io.github.tanmaychinis24.rps.gameplay.GamePlay;
-import io.github.tanmaychinis24.rps.gameplay.Shuffler;
-
 @ExtendWith(MockitoExtension.class)
 public class GamePlayTest {
 	
@@ -41,13 +38,83 @@ public class GamePlayTest {
 		System.setOut(System.out);
 	}
 	
+	
+	@Test
+	public void testHappyPathGamePlay_AllRockCombos() throws IOException {
+		
+		outputCapture = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
+		
+		when(shuffler.nextItem()).thenReturn(Move.ROCK);
+		when(reader.readLine()).thenReturn("R","p ","S");
+		game.play(3);
+		
+		verify(shuffler, times(3)).nextItem();
+		
+		String printedText = outputCapture.toString(StandardCharsets.UTF_8);
+		assertThat(printedText).containsSubsequence(
+			    "Your " + Move.ROCK.description() + " clashed with " + Move.ROCK.description(),
+			    "This turn was a tie !!!",
+			    "Your " + Move.PAPER.description() + " clashed with " + Move.ROCK.description(),
+			    "You win this turn.... !!!",
+			    "Your " + Move.SCISSORS.description() + " clashed with " + Move.ROCK.description(),
+			    "You loose this turn.... :(  !!!"
+			    );
+	}
+	
+	@Test
+	public void testHappyPathGamePlay_AllPaperCombos() throws IOException {
+		
+		outputCapture = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
+		
+		when(shuffler.nextItem()).thenReturn(Move.PAPER);
+		when(reader.readLine()).thenReturn(" r","P","S");
+		game.play(3);
+		
+		verify(shuffler, times(3)).nextItem();
+		
+		String printedText = outputCapture.toString(StandardCharsets.UTF_8);
+		assertThat(printedText).containsSubsequence(
+			    "Your " + Move.ROCK.description() + " clashed with " + Move.PAPER.description(),
+			    "You loose this turn.... :(  !!!",
+			    "Your " + Move.PAPER.description() + " clashed with " + Move.PAPER.description(),
+			    "This turn was a tie !!!",
+			    "Your " + Move.SCISSORS.description() + " clashed with " + Move.PAPER.description(),
+			    "You win this turn.... !!!"
+			    );
+	}
+		
+	@Test
+	public void testHappyPathGamePlay_AllScissorsCombos() throws IOException {
+		
+		outputCapture = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
+		
+		when(shuffler.nextItem()).thenReturn(Move.SCISSORS);
+		when(reader.readLine()).thenReturn("R","P"," s ");
+		game.play(3);
+		
+		verify(shuffler, times(3)).nextItem();
+		
+		String printedText = outputCapture.toString(StandardCharsets.UTF_8);
+		assertThat(printedText).containsSubsequence(
+			    "Your " + Move.ROCK.description() + " clashed with " + Move.SCISSORS.description(),
+			    "You win this turn.... !!!",
+			    "Your " + Move.PAPER.description() + " clashed with " + Move.SCISSORS.description(),
+			    "You loose this turn.... :(  !!!",
+			    "Your " + Move.SCISSORS.description() + " clashed with " + Move.SCISSORS.description(),
+			    "This turn was a tie !!!"
+			    );
+	}	
+	
 	@Test
 	public void testHappyPathGamePlay_withOneInvalidTurnInput() throws IOException {
 		
 		outputCapture = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
 		
-		when(shuffler.nextItem()).thenReturn("S");
+		when(shuffler.nextItem()).thenReturn(Move.SCISSORS);
 		when(reader.readLine()).thenReturn("R","Z", "R", "S","P","S");
 		game.play(5);
 		
@@ -67,7 +134,7 @@ public class GamePlayTest {
 		outputCapture = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
 		
-		when(shuffler.nextItem()).thenReturn("S");
+		when(shuffler.nextItem()).thenReturn(Move.SCISSORS);
 		when(reader.readLine()).thenReturn("R", "R", "Q");
 		game.play(5);
 		
@@ -91,7 +158,7 @@ public class GamePlayTest {
         verify(reader, times(3)).readLine();
         
         String printedText = outputCapture.toString(StandardCharsets.UTF_8);
-		assertThat(printedText).contains("You entered an invalid number, lets try again..");
+		assertThat(printedText).contains("You entered an invalid character, lets try again.. Please enter a number");
 		assertThat(printedText).contains("Lets play 4 rounds");
 		
         

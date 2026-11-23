@@ -1,6 +1,6 @@
-package io.github.tanmaychinis24.rps;
+package io.github.tanmaychitnis24.rps;
 
-import io.github.tanmaychinis24.rps.gameplay.GamePlay;
+import io.github.tanmaychitnis24.rps.gameplay.GamePlay;
 
 public class Application {
 
@@ -13,7 +13,7 @@ public class Application {
 		GamePlay game = new GamePlay();
 		int turns = game.askUserForNumberOfTurns();
 		game.play(turns);
-		System.exit(0);				
+		System.exit(0);		
 	}
 
 }

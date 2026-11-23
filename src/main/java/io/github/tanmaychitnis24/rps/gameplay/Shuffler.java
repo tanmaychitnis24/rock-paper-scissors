@@ -1,4 +1,4 @@
-package io.github.tanmaychinis24.rps.gameplay;
+package io.github.tanmaychitnis24.rps.gameplay;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class Shuffler {
 	
-	private final List<String> bagItems = List.of("R","P","S");
+	private final List<Move> bagItems = List.of(Move.values());
 	private final int copyOfItemsInEachBag = 3;
 	private final int refillAtSize = 4;
 	private Random randomizer;
@@ -16,9 +16,9 @@ public class Shuffler {
 		this.randomizer = random;
 	}
 	
-	private List<String> shuffleBag = new ArrayList<>();
+	private List<Move> shuffleBag = new ArrayList<>();
 	
-	public String nextItem() {
+	public Move nextItem() {
 		if(shuffleBag.size() <= refillAtSize) {
 			refillAndShuffle();
 		}
