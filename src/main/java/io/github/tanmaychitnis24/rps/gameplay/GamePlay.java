@@ -13,6 +13,9 @@ public class GamePlay {
 	private Shuffler shuffler;
 	private BufferedReader reader;
 	
+	private static final String bold = "\033[1;32m";
+	private static final String reset = "\033[1;0m";
+	
 	public GamePlay() {
 		this.userScore = 0;
 		this.computerScore = 0;
@@ -59,18 +62,18 @@ public class GamePlay {
 			Move userMove = capturedUserMove.get();
 			Move computerMove = shuffler.nextItem();
 			
-			System.out.println("Your "+ userMove.description() +" clashed with "+ computerMove.description());
+			System.out.println(bold+"Your "+ userMove.description() +" clashed with "+ computerMove.description()+""+reset);
 			
 			if(userMove.equals(computerMove)) {
-				System.out.println("This turn was a tie !!!");
+				System.out.println("This turn was a tie !!!"+reset);
 				continue;
 			}
 			if(userMove.beats(computerMove)) {
 				userScore++;
-				System.out.println("You win this turn.... !!!");
+				System.out.println(bold+"You win this turn.... !!!"+reset);
 			} else {
 				computerScore++;
-				System.out.println("You loose this turn.... :(  !!!");
+				System.out.println(bold+"You loose this turn.... :(  !!!"+reset);
 			}
 		}
 		endOfGameDisplay();
@@ -80,9 +83,6 @@ public class GamePlay {
 		eachTurnDisplay();
 		
 		while(true) {
-			System.out.println("Please enter a single character from following choices");
-			System.out.println(" R- Rock | P - Papper | S - Scissors | Q - Quit game");
-			
 			try {
 				String inputLine = reader.readLine();
 				if(inputLine == null) {
@@ -115,29 +115,32 @@ public class GamePlay {
 	
 	private void eachTurnDisplay() {
 		System.out.println(" ================Score================= ");
-		System.out.println("|\t\t\t You- "+ this.userScore +" Computer- "+ this.computerScore +"\t\t\t|");
+		System.out.println("|\t You- "+ this.userScore +" Computer- "+ this.computerScore +"\t\t|");
 		System.out.println(" ======================================= ");
 		
-		System.out.println(" ==================================== ");
-		System.out.println("|\t\t What is your next choice\t\t |");
-		System.out.println(" ==================================== ");
+		System.out.println(" =======================================================");
+		System.out.println("|                What is your next choice               |");
 		System.out.println();
+		System.out.println("Please enter a single character from following choices");
+		System.out.println(" R- Rock | P - Papper | S - Scissors | Q - Quit game");
+		System.out.println(" =======================================================");
+		
 	}
 	
 	private void endOfGameDisplay() {
-		System.out.println(" ================Final Score================= ");
-		System.out.println("|\t\t\t You- "+ this.userScore +" Computer- "+ this.computerScore +" \t\t\t|");
-		System.out.println(" ============================================ ");
+		System.out.println(bold+" ================Final Score================= ");
+		System.out.println("|\t You- "+ this.userScore +" Computer- "+ this.computerScore +"    \t\t|");
+		System.out.println(" ============================================ "+reset);
 		
 		if(this.userScore == this.computerScore) {
-			System.out.println("The scores are tied !!!!!");
+			System.out.println(bold+ "The scores are tied !!!!!"+reset);
 		} else if (this.userScore > this.computerScore) {
-			System.out.println("You beat your oponent fair and square  !!!!!");
+			System.out.println(bold+"You beat your oponent fair and square  !!!!!"+reset);
 		} else {
-			System.out.println("You lost :( :( ");
+			System.out.println(bold+"You lost :( :( "+reset);
 		}
 		
-		System.out.println(" ================--------------------====== ");
+		System.out.println(" ========================================== ");
 		System.out.println("| Thanks for Playing :) See you next time  |");
 		System.out.println(" ========================================== ");
 		

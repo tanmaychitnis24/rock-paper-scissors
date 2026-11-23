@@ -17,7 +17,7 @@ to play the game n times before the program exits.
 - The user is asked how many rounds of 'fight' will decide the game and allowed to enter a number. The game then can run for n rounds before it exits declaring the winner
 - The user is displayed his choice of rock/paper/scissor on each turn
 - The user enter r for rock, p for paper and s for scissors in each turn
-- The user can enter q for quitting the game at any point
+- The user can enter q for quitting the game at any point during turns
 - the current score should also be displayed each round along with user choices
 
 ## Non functional requirements 
