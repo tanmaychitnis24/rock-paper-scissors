@@ -13,8 +13,8 @@ public class GamePlay {
 	private Shuffler shuffler;
 	private BufferedReader reader;
 	
-	private static final String bold = "\033[1;32m";
-	private static final String reset = "\033[1;0m";
+	private static final String BOLD_GREEN = "\033[1;32m";
+	private static final String RESET_TEXT_FORMATTING = "\033[1;0m";
 	
 	public GamePlay() {
 		this.userScore = 0;
@@ -29,12 +29,12 @@ public class GamePlay {
 			int turns = 0;
 			try {
 				
-				String inputLne = reader.readLine();
-				if(inputLne == null) {
+				String inputLine = reader.readLine();
+				if(inputLine == null) {
 					exitGameAbruptly();
 					return 0;
 				}
-				turns = Integer.parseInt(inputLne.trim());
+				turns = Integer.parseInt(inputLine.trim());
 				if(turns <=  0) {
 					System.out.println("You must choose a number greater than 0 for number of turns ..");
 					continue;
@@ -62,18 +62,18 @@ public class GamePlay {
 			Move userMove = capturedUserMove.get();
 			Move computerMove = shuffler.nextItem();
 			
-			System.out.println(bold+"Your "+ userMove.description() +" clashed with "+ computerMove.description()+""+reset);
+			System.out.println(BOLD_GREEN + "Your "+ userMove.description() +" clashed with "+ computerMove.description() + "" + RESET_TEXT_FORMATTING);
 			
 			if(userMove.equals(computerMove)) {
-				System.out.println("This turn was a tie !!!"+reset);
+				System.out.println("This turn was a tie !!!"+RESET_TEXT_FORMATTING);
 				continue;
 			}
 			if(userMove.beats(computerMove)) {
 				userScore++;
-				System.out.println(bold+"You win this turn.... !!!"+reset);
+				System.out.println(BOLD_GREEN + "You win this turn.... !!!" + RESET_TEXT_FORMATTING);
 			} else {
 				computerScore++;
-				System.out.println(bold+"You loose this turn.... :(  !!!"+reset);
+				System.out.println(BOLD_GREEN + "You loose this turn.... :(  !!!" + RESET_TEXT_FORMATTING);
 			}
 		}
 		endOfGameDisplay();
@@ -128,16 +128,16 @@ public class GamePlay {
 	}
 	
 	private void endOfGameDisplay() {
-		System.out.println(bold+" ================Final Score================= ");
+		System.out.println(BOLD_GREEN + " ================Final Score================= ");
 		System.out.println("|\t You- "+ this.userScore +" Computer- "+ this.computerScore +"    \t\t|");
-		System.out.println(" ============================================ "+reset);
+		System.out.println(" ============================================ " + RESET_TEXT_FORMATTING);
 		
 		if(this.userScore == this.computerScore) {
-			System.out.println(bold+ "The scores are tied !!!!!"+reset);
+			System.out.println(BOLD_GREEN + "The scores are tied !!!!!" + RESET_TEXT_FORMATTING);
 		} else if (this.userScore > this.computerScore) {
-			System.out.println(bold+"You beat your oponent fair and square  !!!!!"+reset);
+			System.out.println(BOLD_GREEN + "You beat your oponent fair and square  !!!!!" + RESET_TEXT_FORMATTING);
 		} else {
-			System.out.println(bold+"You lost :( :( "+reset);
+			System.out.println(BOLD_GREEN + "You lost :( :( " + RESET_TEXT_FORMATTING);
 		}
 		
 		System.out.println(" ========================================== ");

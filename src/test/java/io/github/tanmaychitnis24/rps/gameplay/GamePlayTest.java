@@ -3,6 +3,7 @@ package io.github.tanmaychitnis24.rps.gameplay;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
@@ -12,7 +13,9 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -34,17 +37,19 @@ public class GamePlayTest {
 	private ByteArrayOutputStream outputCapture;
 	
 	@AfterEach
-	void resetSystemIn() {
-		System.setIn(System.in);
+	void resetSystemInAndOut() {
 		System.setOut(ORIGINAL_OUT);
+	}
+	
+	@BeforeEach
+	void overrideSystemOutToCaptureAndValidate() {
+		outputCapture = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
 	}
 	
 	
 	@Test
 	public void testHappyPathGamePlay_AllRockCombos() throws IOException {
-		
-		outputCapture = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
 		
 		when(shuffler.nextItem()).thenReturn(Move.ROCK);
 		when(reader.readLine()).thenReturn("R","p ","S");
@@ -66,9 +71,6 @@ public class GamePlayTest {
 	@Test
 	public void testHappyPathGamePlay_AllPaperCombos() throws IOException {
 		
-		outputCapture = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
-		
 		when(shuffler.nextItem()).thenReturn(Move.PAPER);
 		when(reader.readLine()).thenReturn(" r","P","S");
 		game.play(3);
@@ -88,9 +90,6 @@ public class GamePlayTest {
 		
 	@Test
 	public void testHappyPathGamePlay_AllScissorsCombos() throws IOException {
-		
-		outputCapture = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
 		
 		when(shuffler.nextItem()).thenReturn(Move.SCISSORS);
 		when(reader.readLine()).thenReturn("R","P"," s ");
@@ -112,9 +111,6 @@ public class GamePlayTest {
 	@Test
 	public void testHappyPathGamePlay_withOneInvalidTurnInput() throws IOException {
 		
-		outputCapture = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
-		
 		when(shuffler.nextItem()).thenReturn(Move.SCISSORS);
 		when(reader.readLine()).thenReturn("R","Z", "R", "S","P","S");
 		game.play(5);
@@ -132,9 +128,6 @@ public class GamePlayTest {
 	@Test
 	public void testQuitInBetweenGamePlay() throws IOException {
 		
-		outputCapture = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
-		
 		when(shuffler.nextItem()).thenReturn(Move.SCISSORS);
 		when(reader.readLine()).thenReturn("R", "R", "Q");
 		game.play(5);
@@ -145,15 +138,26 @@ public class GamePlayTest {
 		String printedText = outputCapture.toString(StandardCharsets.UTF_8);
 		assertThat(printedText).contains("You- 2 Computer- 0");
 		assertThat(printedText).contains("You beat your oponent fair and square  !!!!!");
-		assertThat(printedText).contains("Final Score");
-		assertThat(printedText).contains("You choose to quit the game");
+		assertThat(printedText).containsOnlyOnce("Final Score");
+		assertThat(printedText).containsOnlyOnce("You choose to quit the game");
+	}
+	
+	@Test
+	public void testQuitGamePlayAtStart() throws IOException {
+		
+		when(reader.readLine()).thenReturn("q");
+		game.play(5);
+		
+		verifyNoInteractions(shuffler);
+		
+		String printedText = outputCapture.toString(StandardCharsets.UTF_8);
+		assertThat(printedText).contains("You- 0 Computer- 0");
+		assertThat(printedText).containsOnlyOnce("Final Score");
+		assertThat(printedText).containsOnlyOnce("You choose to quit the game");
 	}
 	
 	@Test
 	public void testNullReadLineInputDuringTurns() throws IOException {
-		
-		outputCapture = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
 		
 		when(shuffler.nextItem()).thenReturn(Move.SCISSORS);
 		when(reader.readLine()).thenReturn("R", null);
@@ -164,14 +168,12 @@ public class GamePlayTest {
 		
 		String printedText = outputCapture.toString(StandardCharsets.UTF_8);
 		assertThat(printedText).contains("You- 1 Computer- 0");
-		assertThat(printedText).contains("Final Score");
+		assertThat(printedText).containsOnlyOnce("Final Score");
+		assertThat(printedText).containsOnlyOnce("Something went wrong while playing the game");
 	}
 	
 	@Test
 	public void testExceptionDuringTurns() throws IOException {
-		
-		outputCapture = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
 		
 		when(shuffler.nextItem()).thenReturn(Move.SCISSORS);
 		when(reader.readLine()).thenReturn("R").thenThrow(new IOException());
@@ -182,37 +184,35 @@ public class GamePlayTest {
 		
 		String printedText = outputCapture.toString(StandardCharsets.UTF_8);
 		assertThat(printedText).contains("You- 1 Computer- 0");
-		assertThat(printedText).contains("Final Score");
+		assertThat(printedText).containsOnlyOnce("Final Score");
+		assertThat(printedText).containsOnlyOnce("Something went wrong while playing the game");
 	}
 	
 	@Test
+	@Timeout(2)
 	public void testInvalidNumberOfTurns_followedBySuccess() throws IOException {
 		
-		outputCapture = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
-		
-        when(reader.readLine()).thenReturn("R", "R", "4");
-        game.askUserForNumberOfTurns();
+        when(reader.readLine()).thenReturn("R", " -5", "4");
+        int turns = game.askUserForNumberOfTurns();
         
         verify(reader, times(3)).readLine();
-        
+        assertThat(turns).isEqualTo(4);
         String printedText = outputCapture.toString(StandardCharsets.UTF_8);
 		assertThat(printedText).containsSubsequence("You entered an invalid character, lets try again.. Please enter a number",
+													"You must choose a number greater than 0 for number of turns ..",
 													"Lets play 4 rounds");
 			
 	}
 	
 	@Test
-	public void testNullReadLine_followedByFailure() throws IOException {
-		
-		outputCapture = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputCapture, true, StandardCharsets.UTF_8));
+	@Timeout(2)
+	public void testInvalidNumberOfTurns_followedByFailure() throws IOException {
 		
         when(reader.readLine()).thenReturn("R", "-3", null);
-        game.askUserForNumberOfTurns();
+        int turns = game.askUserForNumberOfTurns();
         
         verify(reader, times(3)).readLine();
-        
+        assertThat(turns).isZero();
         String printedText = outputCapture.toString(StandardCharsets.UTF_8);
 		assertThat(printedText).containsSubsequence("You entered an invalid character, lets try again.. Please enter a number",
 													"You must choose a number greater than 0 for number of turns ..",
