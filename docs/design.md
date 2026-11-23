@@ -27,6 +27,7 @@ to play the game n times before the program exits.
 
 
 ## Future scope (out of scope for now)
+- an arrow based list picker instead user inputting R P S or Q
 - three modes of game easy, medium and hard. Easy where user may be eventually be able to predict the computer move. medium where the computer move is fairly random, hard where the computer can try and predict the user move
 - a user profile maintaining at least last 10 user scores
 - a high score board
